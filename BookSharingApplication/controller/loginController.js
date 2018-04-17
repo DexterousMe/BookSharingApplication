@@ -1,6 +1,7 @@
 var loginApp = angular.module("loginApp",['ngRoute']);
 
 loginApp.controller('loginController',function($scope,$window,$http){
+    console.log("Login Controller");
     $scope.getUserName = function() {
         var user = {userName: $window.sessionStorage.getItem("userEmail")};
         $http({
@@ -28,6 +29,7 @@ loginApp.controller('loginController',function($scope,$window,$http){
 });
 
 loginApp.filter('customBookFilter',function(){
+    console.log("Custom Book Filter");
     return function (input, option) {
         if (!option.type || !option.term) {
             return input;
@@ -72,7 +74,8 @@ loginApp.config(function($routeProvider) {
 });
 
 loginApp.controller('basicController',function($scope,$window,$http){
-    $scope.searchFilter = ["author", "title", "genre"];
+    console.log("Basic Controller");
+    $scope.searchFilter = ["author", "title", "genre","Location"];
     $scope.dropdownSelect = false;
     $scope.categorySelect = function(selectedCategory){
         $scope.dropdownSelect = true;
@@ -115,6 +118,7 @@ loginApp.controller('basicController',function($scope,$window,$http){
 });
 
 loginApp.controller('addBookController',function($scope,$window,$http){
+    console.log("Add book Controller");
     $scope.title = '';
     $scope.author = '';
     $scope.genre='';
@@ -122,9 +126,12 @@ loginApp.controller('addBookController',function($scope,$window,$http){
     $scope.endDate = '';
     $scope.deliveryMode = '';
     $scope.bookAddedSuccessfully = false;
+    $scope.book_status='';
+    $scope.location='';
     $scope.addBook = function(){
-        var bookData = {emailBook:$window.sessionStorage.getItem("userEmail"),titleBook:$scope.title,authorBook:$scope.author,genreBook:$scope.genre,startDateBook:$scope.startDate,endDateBook:$scope.endDate,deliveryModeBook:$scope.deliveryMode};
-        $http({
+        var bookData = {emailBook:$window.sessionStorage.getItem("userEmail"),titleBook:$scope.title,authorBook:$scope.author,genreBook:$scope.genre,startDateBook:$scope.startDate,endDateBook:$scope.endDate,book_status:$scope.book_status,location:$scope.location,deliveryModeBook:$scope.deliveryMode};
+        //console.log($scope.location);
+		$http({
             method: "POST",
             url: "../config/LenderData.php",
             data: bookData
@@ -138,6 +145,7 @@ loginApp.controller('addBookController',function($scope,$window,$http){
 
 });
 loginApp.controller('lendedBooksController',function($scope,$window,$http){
+    //console.log("Lended Book Controller");
     var email = {email:$window.sessionStorage.getItem("userEmail")};
     $scope.noBooks = false;
     $http({
@@ -157,6 +165,7 @@ loginApp.controller('lendedBooksController',function($scope,$window,$http){
 });
 
 loginApp.controller('borrowedBooksController',function($scope,$window,$http){
+    //console.log("Borrowed Book Controller");
     var email = {email:$window.sessionStorage.getItem("userEmail")};
     $scope.noBooks = false;
     $http({
@@ -176,6 +185,7 @@ loginApp.controller('borrowedBooksController',function($scope,$window,$http){
 });
 
 loginApp.controller('notificationController',function($scope,$window,$http,$route){
+    //console.log("Notification Controller");
     var email = {email:$window.sessionStorage.getItem("userEmail")};
     $http({
         method: "POST",
