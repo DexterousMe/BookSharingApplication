@@ -130,7 +130,17 @@ loginApp.controller('addBookController',function($scope,$window,$http){
     $scope.location='';
     $scope.addBook = function(){
         var bookData = {emailBook:$window.sessionStorage.getItem("userEmail"),titleBook:$scope.title,authorBook:$scope.author,genreBook:$scope.genre,startDateBook:$scope.startDate,endDateBook:$scope.endDate,book_status:$scope.book_status,location:$scope.location,deliveryModeBook:$scope.deliveryMode};
-        //console.log($scope.location);
+        console.log(bookData.titleBook);
+        console.log(bookData.authorBook);
+        console.log(bookData.genreBook);
+        
+        console.log(bookData.startDateBook);
+        console.log(bookData.endDateBook);
+       
+        console.log(bookData.book_status);
+        console.log(bookData.deliveryModeBook);
+        console.log(bookData.location);
+       
 		$http({
             method: "POST",
             url: "../config/LenderData.php",
@@ -139,6 +149,7 @@ loginApp.controller('addBookController',function($scope,$window,$http){
             if(response.data.message=="True"){
                 $scope.bookAddedSuccessfully = true;
             }
+            else console.log("Adding data unsuccessful");
         },function(response){
         });
     }

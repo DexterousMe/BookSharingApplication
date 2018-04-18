@@ -31,10 +31,16 @@ else {
     $endtime=strtotime($userenddate);
     $enddate=date('Y-m-d H:i:s',$endtime);
     $mod=$data['deliveryModeBook'];
+
+    $book_status=$data['book_status'];
+    $location=$data['location'];
+
+
+    
     $stmt3=$conn->query("CALL GetCountOfBooks(@p1);");
     $stmt2=$conn->query("SELECT @p1 AS COUNT;");
     $result1=$stmt2->fetch();
-    $stmt=$conn->query("CALL addBookForLending('" .$email. "','" .$title. "','" .$author. "','" .$genre. "','" .$startdate. "','" .$enddate. "','" .$mod. "');");
+    $stmt=$conn->query("CALL addBookForLending('" .$email. "','" .$title. "','" .$author. "','" .$genre. "','" .$startdate. "','" .$enddate. "','" .$mod. "','" .$book_status. "','" .$location. "');");
     $stmt4=$conn->query("CALL GetCountOfBooks(@p1);");
     $stmt5=$conn->query("SELECT @p1 AS COUNT;");
     $result2=$stmt5->fetch();
