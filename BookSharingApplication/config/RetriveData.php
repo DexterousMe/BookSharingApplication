@@ -40,7 +40,11 @@ if($num>0){
             "genre" => $genre,
             "author" => $author,
             "start_Date_Time" => $start_Date_Time,
-            "end_Date_time" => $end_Date_Time
+            "end_Date_time" => $end_Date_Time,
+            "methodOfDelivery"=>$methodOfDelivery,
+            "book_status" => $book_status,
+            "location"=>$location
+
         );
  
         array_push($products_arr["records"], $product_item);

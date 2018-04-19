@@ -47,6 +47,7 @@ else {
     $format['Ratings']=$result2['ratings'];
     $format['FirstName']=$result2['firstname'];
     $format['LastName']=$result2['lastname'];
+   // $format['location']=$result2['location'];
     echo json_encode(
         array("bookData"=>$format)
     );

@@ -31,9 +31,12 @@ loginApp.controller('loginController',function($scope,$window,$http){
 loginApp.filter('customBookFilter',function(){
     console.log("Custom Book Filter");
     return function (input, option) {
+                
+        
         if (!option.type || !option.term) {
             return input;
         }
+        console.log("Here now")
         var result = [];
         angular.forEach(input,function (val, key) {
             if(val[option.type].toLowerCase().indexOf(option.term.toLowerCase())>-1){
@@ -75,7 +78,7 @@ loginApp.config(function($routeProvider) {
 
 loginApp.controller('basicController',function($scope,$window,$http){
     console.log("Basic Controller");
-    $scope.searchFilter = ["author", "title", "genre","Location"];
+    $scope.searchFilter = ["author", "title", "genre","location"];
     $scope.dropdownSelect = false;
     $scope.categorySelect = function(selectedCategory){
         $scope.dropdownSelect = true;
@@ -85,6 +88,7 @@ loginApp.controller('basicController',function($scope,$window,$http){
         method:"GET",
         url:"../config/RetriveData.php"
     }).then(function(response){
+        console.log("-------------");
         $scope.booksList = response.data;
     },function(response){
     });

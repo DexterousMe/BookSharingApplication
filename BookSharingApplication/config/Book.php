@@ -13,6 +13,10 @@ class Book{
     public $author;
     public $start_date_time;
     public $end_date_time;
+    public $methodOfDelivery;
+    public $book_status;
+    public $location;
+
  
     // constructor with $db as database connection
     public function __construct($db){
