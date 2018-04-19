@@ -32,6 +32,12 @@ The current usage of technologies for accomplishing project goals are discussed 
 [Priyance Mandlewala](https://github.com/princemandlewala)
 [Vishrut Patel](https://github.com/VishrutPatel)
 
+## Updated Team
+[Abhinandan Deshpande](https://github.com/abhinandan27)
+[Deepak Patil](https://github.com/deepak15493)
+[Kanchan Bisht](https://github.com/DexterousMe)
+[Prashant Nagdeve](https://github.com/PrashantNagdeve)
+
 Mentor: [Amritanshu Agrawal](https://github.com/amritbhanu)
 
 Professor: [Tim Menzies](https://github.com/timm)
