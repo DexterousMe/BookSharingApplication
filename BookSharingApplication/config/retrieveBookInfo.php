@@ -16,7 +16,7 @@ else {
     $data = json_decode($json,true);
     $bookId=$data["bookId"];
 
-    $stmt=$conn->query("CALL RetriveBookLendingInformation('" .$bookId. "',@p1,@p7,@p8,@p9,@p2,@p3,@p4,@p5,@p6,@p10);");
+    $stmt=$conn->query("CALL RetriveBookLendingInformation('" .$bookId. "',@p1,@p7,@p8,@p9,@p2,@p3,@p4,@p5,@p6,@p10,@p11);");
     //$stmt2=$conn->query("SELECT @p1 AS EMAIL");
     $result2 = $stmt->fetch(PDO::FETCH_ASSOC);
 //    $stmt8=$conn->query("SELECT @p7 AS TITLE");
@@ -48,6 +48,7 @@ else {
     $format['FirstName']=$result2['firstname'];
     $format['LastName']=$result2['lastname'];
     $format['location']=$result2['location'];
+    $format['availability']=$result2['availability'];
     echo json_encode(
         array("bookData"=>$format)
     );

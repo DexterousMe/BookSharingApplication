@@ -14,11 +14,12 @@ else {
     //get a json file and decode it
     $json = file_get_contents("php://input");
     $data = json_decode($json,true);
+    
     $lender_email = $data['lenderEmail'];
     $borrower_email = $data['borrowerEmail'];
     $book_id = $data['bookId'];
-    $stmt=$conn->query("CALL addTransaction('" .$lender_email. "','" .$book_id. "','" .$borrower_email. "');");
-    $stmt1=$conn->query("CALL updateBookStatus('" .$book_id. "');");
+    $stmt=$conn->query("CALL addTransaction('" .$lender_email. "','" .$borrower_email. "','" .$book_id. "');");
+    $stmt1=$conn->query("CALL updateBookAvailability('" .$book_id. "');");
     $stmt2=$conn->query("CALL deleteBorrowRequest('" .$book_id. "');");
     $stmt3=$conn->query("CALL addReviewForTransaction('" .$book_id. "');");
 }

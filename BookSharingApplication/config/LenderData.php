@@ -34,13 +34,13 @@ else {
 
     $book_status=$data['book_status'];
     $location=$data['location'];
-
+    $availability=1;
 
     
     $stmt3=$conn->query("CALL GetCountOfBooks(@p1);");
     $stmt2=$conn->query("SELECT @p1 AS COUNT;");
     $result1=$stmt2->fetch();
-    $stmt=$conn->query("CALL addBookForLending('" .$email. "','" .$title. "','" .$author. "','" .$genre. "','" .$startdate. "','" .$enddate. "','" .$mod. "','" .$book_status. "','" .$location. "');");
+    $stmt=$conn->query("CALL addBookForLending('" .$email. "','" .$title. "','" .$author. "','" .$genre. "','" .$startdate. "','" .$enddate. "','" .$mod. "','" .$book_status. "','" .$location. "','" .$availability. "');");
     $stmt4=$conn->query("CALL GetCountOfBooks(@p1);");
     $stmt5=$conn->query("SELECT @p1 AS COUNT;");
     $result2=$stmt5->fetch();

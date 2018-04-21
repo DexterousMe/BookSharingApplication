@@ -132,8 +132,9 @@ loginApp.controller('basicController',function($scope,$window,$http){
                 url: "../config/BorrowRequest.php",
                 data: borrowData
             }).then(function(response){
-                console.log(response.data.message);
-                if(response.data.message=="True"){
+                console.log("Bookdata")
+                console.log($scope.bookData.availability);
+                if(response.data.message=="True" && $scope.bookData.availability==1){
                     $scope.requestSentSuccessfully = true;
 
                      //adding to bookid
@@ -293,15 +294,57 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
     },function(response){
     });
     $scope.approveBorrowRequest = function(book_id,borrower_email){
-        var approvedBookData = {bookId:book_id,borrowerEmail: borrower_email,lenderEmail:$window.sessionStorage.getItem("userEmail")};
+        //checking the book availability
+
+        $scope.bookAvailability=true;
+        var bookIdentity = {bookId:book_id};
+        
         $http({
             method: "POST",
-            url: "../config/approveRequest.php",
-            data: approvedBookData
+            url: "../config/retrieveBookInfo.php",
+            data: bookIdentity
         }).then(function(response){
-            $route.reload();
-            $window.location.reload();
+            $scope.bookData = response.data.bookData;
+           
+           if(response.data.bookData.availability==1)
+                {
+                    //console.log("Inside 1")
+                    var approvedBookData = {bookId:book_id,borrowerEmail: borrower_email,lenderEmail:$window.sessionStorage.getItem("userEmail")};
+                    $http({
+                        method: "POST",
+                        url: "../config/approveRequest.php",
+                        data: approvedBookData
+                    }).then(function(response){
+                       // console.log("Inside Borrow request approval");
+                       // console.log(response);
+                        $route.reload();
+                        $window.location.reload();
+                    },function(response){
+                    });
+                }
+           
+            
         },function(response){
         });
+        
+        //checking ends
+        /*
+        if($scope.bookAvailability==1)
+        {
+            console.log("Inside 1")
+            var approvedBookData = {bookId:book_id,borrowerEmail: borrower_email,lenderEmail:$window.sessionStorage.getItem("userEmail")};
+            $http({
+                method: "POST",
+                url: "../config/approveRequest.php",
+                data: approvedBookData
+            }).then(function(response){
+               // console.log("Inside Borrow request approval");
+               // console.log(response);
+                //$route.reload();
+              //  $window.location.reload();
+            },function(response){
+            });
+       }
+       */
     }
 });
