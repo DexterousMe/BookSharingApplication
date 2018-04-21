@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Apr 18, 2018 at 02:16 AM
+-- Generation Time: Apr 21, 2018 at 03:34 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -27,14 +27,18 @@ DELIMITER $$
 -- Procedures
 --
 DROP PROCEDURE IF EXISTS `addBookForLending`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `addBookForLending`(IN `inptemail` VARCHAR(50), IN `inpttitle` VARCHAR(30), IN `inptauthor` VARCHAR(100), IN `inptgenre` VARCHAR(100), IN `inptstartdatetime` DATETIME, IN `inptenddatetime` DATETIME, IN `inptmod` VARCHAR(3), IN `inptbook_status` VARCHAR(50), IN `inptlocation` VARCHAR(50))
-insert into book 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addBookForLending` (IN `inptemail` VARCHAR(50), IN `inpttitle` VARCHAR(30), IN `inptauthor` VARCHAR(100), IN `inptgenre` VARCHAR(100), IN `inptstartdatetime` DATETIME, IN `inptenddatetime` DATETIME, IN `inptmod` VARCHAR(3), IN `inptbook_status` VARCHAR(50), IN `inptlocation` VARCHAR(50))  insert into book 
 (email,title,author,genre,start_Date_Time,end_Date_Time,methodOfDelivery,book_status,location)values(inptemail,inpttitle,inptauthor,inptgenre,inptstartdatetime,inptenddatetime,inptmod,inptbook_status,inptlocation)$$
 
 DROP PROCEDURE IF EXISTS `addBorrowRequest`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `addBorrowRequest` (IN `inptborroweremail` VARCHAR(50), IN `inptbookid` INT(6))  insert into borrowrequest 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addBorrowRequest` (IN `email` VARCHAR(50), IN `bookid` INT(6))  insert into borrowrequest 
 (borrower_email,book_Id)
-values (inptborroweremail,inptbookid)$$
+values (email,bookid)$$
+
+DROP PROCEDURE IF EXISTS `addLender`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addLender` (IN `email` VARCHAR(50), IN `ratings` FLOAT, IN `no_of_reviews` INT(11))  NO SQL
+INSERT INTO `lender` ( `email`, `ratings`, `no_of_reviews`) VALUES
+(email, ratings, no_of_reviews)$$
 
 DROP PROCEDURE IF EXISTS `addReviewForTransaction`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addReviewForTransaction` (IN `inptbookid` INT(6))  NO SQL
@@ -55,6 +59,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getCountOfBooks` (OUT `count` INT) 
 
 DROP PROCEDURE IF EXISTS `getCountOfBorrowRequests`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getCountOfBorrowRequests` (OUT `count` INT(6))  SELECT count(*) INTO count FROM borrowrequest$$
+
+DROP PROCEDURE IF EXISTS `getLenderByEmail`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLenderByEmail` (IN `email` VARCHAR(50), OUT `lender` VARCHAR(50))  NO SQL
+select l.email as lender
+from lender l
+where l.email=email$$
 
 DROP PROCEDURE IF EXISTS `getNotificationCount`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getNotificationCount` (IN `inptemail` VARCHAR(50), OUT `count` INT(6))  NO SQL
@@ -81,8 +91,7 @@ DROP PROCEDURE IF EXISTS `retrieveBorrowRequests`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `retrieveBorrowRequests` (IN `inptemail` VARCHAR(50), OUT `abcd` JSON)  SELECT borrowrequest.book_Id,borrower.email ,borrower.ratings ,book.title FROM borrower , borrowrequest, book WHERE borrower.email = borrowrequest.borrower_email AND book.id = borrowrequest.book_Id AND book.email = inptemail ORDER BY borrowrequest.book_Id$$
 
 DROP PROCEDURE IF EXISTS `RetriveBookLendingInformation`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `RetriveBookLendingInformation`(IN `inid` INT(6), OUT `email` VARCHAR(50), OUT `title` VARCHAR(50), OUT `author` VARCHAR(50), OUT `genre` VARCHAR(50), OUT `start_Date_Time` DATETIME, OUT `end_Date_Time` DATETIME, OUT `ratings` FLOAT(3,2), OUT `firstname` VARCHAR(30), OUT `lastname` VARCHAR(30), OUT `location` VARCHAR(50))
-select b.id,b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname,b.location
+CREATE DEFINER=`root`@`localhost` PROCEDURE `RetriveBookLendingInformation` (IN `inid` INT(6), OUT `email` VARCHAR(50), OUT `title` VARCHAR(50), OUT `author` VARCHAR(50), OUT `genre` VARCHAR(50), OUT `start_Date_Time` DATETIME, OUT `end_Date_Time` DATETIME, OUT `ratings` FLOAT(3,2), OUT `firstname` VARCHAR(30), OUT `lastname` VARCHAR(30), OUT `location` VARCHAR(50))  select b.id,b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname,b.location
 from book b, lender l, user u
 where inid = b.id AND b.email = l.email AND l.email = u.email$$
 
@@ -136,11 +145,12 @@ CREATE TABLE IF NOT EXISTS `book` (
   `location` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `book`
 --
+
 
 -- --------------------------------------------------------
 
@@ -158,14 +168,6 @@ CREATE TABLE IF NOT EXISTS `borrower` (
   KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `borrower`
---
-
-INSERT INTO `borrower` (`id`, `email`, `ratings`, `no_of_reviews`) VALUES
-(1, 'pjmandle@ncsu.edu', 4.20, 14),
-(2, 'vnpatel@ncsu.edu', 5.00, 14);
-
 -- --------------------------------------------------------
 
 --
@@ -180,19 +182,11 @@ CREATE TABLE IF NOT EXISTS `borrowrequest` (
   PRIMARY KEY (`id`),
   KEY `borrower_email` (`borrower_email`),
   KEY `book_Id` (`book_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `borrowrequest`
 --
-
-INSERT INTO `borrowrequest` (`id`, `book_Id`, `borrower_email`) VALUES
-(26, 7, 'pjmandle@ncsu.edu'),
-(25, 22, 'vnpatel@ncsu.edu'),
-(24, 8, 'pjmandle@ncsu.edu'),
-(23, 22, 'dkamin@ncsu.edu'),
-(22, 21, 'dkamin@ncsu.edu'),
-(21, 7, 'dkamin@ncsu.edu');
 
 -- --------------------------------------------------------
 
@@ -207,15 +201,9 @@ CREATE TABLE IF NOT EXISTS `lender` (
   `ratings` float(3,2) DEFAULT NULL,
   `no_of_reviews` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `email_2` (`email`),
   KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `lender`
---
-
-INSERT INTO `lender` (`id`, `email`, `ratings`, `no_of_reviews`) VALUES
-(1, 'pjmandle@ncsu.edu', 4.00, 12);
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -241,14 +229,6 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   UNIQUE KEY `transaction_id` (`transaction_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `reviews`
---
-
-INSERT INTO `reviews` (`id`, `transaction_id`, `borrow_book_condition_review`, `borrow_review_text`, `borrow_exp_review`, `borrow_exp_text`, `lender_review_approve`, `return_book_review`, `return_review_text`, `return_exp_review`, `return_exp_text`, `borrower_review_approve`) VALUES
-(1, 1, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0),
-(2, 7, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -266,16 +246,6 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   KEY `borrower_email` (`borrower_email`),
   KEY `book_Id` (`book_Id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `transaction`
---
-
-INSERT INTO `transaction` (`id`, `lender_email`, `borrower_email`, `book_Id`) VALUES
-(1, 'pjmandle@ncsu.edu', 'vnpatel@ncsu.edu', 7),
-(2, 'pjmandle@ncsu.edu', 'pjmandle@ncsu.edu', 15),
-(6, 'pjmandle@ncsu.edu', 'pjmandle@ncsu.edu', 8),
-(7, 'pjmandle@ncsu.edu', 'pjmandle@ncsu.edu', 7);
 
 -- --------------------------------------------------------
 

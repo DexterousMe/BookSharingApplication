@@ -139,12 +139,44 @@ loginApp.controller('basicController',function($scope,$window,$http){
                      //adding to bookid
                      //var borrowData={book_id:bookId,}
 
+                     //adding entries in borrower
+        
+                        borrowerData={emailBook:$window.sessionStorage.getItem("userEmail"),ratings:1,no_of_reviews:1}
+        
+                        //console.log("came here");
+                        $http({
+                            method: "POST",
+                            url: "../config/addBorrower.php",
+                            data: borrowerData
+                            }).then(function(response){
+                                    console.log(response);
+                
+                            },function(response){
+                        });
+                      //similarly adding entries to borrow request table
+                    /*  var borrowRequestData={emailBook:$window.sessionStorage.getItem("userEmail"),bookId:bookId}
+                      $http({
+                        method: "POST",
+                        url: "../config/addBorrowRequest.php",
+                        data: borrowRequestData
+                        }).then(function(response){
+                                console.log("Resoponsa");
+            
+                        },function(response){
+                    });
+
+
+                    */
+                      //ends
+         
+                        //borrower ends
                 }
             },function(response){
             });
         }
         else $scope.requestSentSuccessfully = false;
        
+        
         /*
        //Starts
         $http({
@@ -180,7 +212,7 @@ loginApp.controller('addBookController',function($scope,$window,$http){
         //Check with this, 
         //adding lender if he is not available in database
        $scope.lenderMail="";
-        var lenderData={emailBook:$window.sessionStorage.getItem("userEmail"),ratings:0,no_of_reviews:0}
+        var lenderData={emailBook:$window.sessionStorage.getItem("userEmail"),ratings:1,no_of_reviews:1}
         $http({
             method: "POST",
             url: "../config/addLender.php",
@@ -256,6 +288,8 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
         data: email
     }).then(function(response){
         $scope.notificationList = response.data.message;
+        console.log(response);
+        console.log($scope.notificationList);
     },function(response){
     });
     $scope.approveBorrowRequest = function(book_id,borrower_email){
