@@ -81,7 +81,8 @@ DROP PROCEDURE IF EXISTS `retrieveBorrowRequests`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `retrieveBorrowRequests` (IN `inptemail` VARCHAR(50), OUT `abcd` JSON)  SELECT borrowrequest.book_Id,borrower.email ,borrower.ratings ,book.title FROM borrower , borrowrequest, book WHERE borrower.email = borrowrequest.borrower_email AND book.id = borrowrequest.book_Id AND book.email = inptemail ORDER BY borrowrequest.book_Id$$
 
 DROP PROCEDURE IF EXISTS `RetriveBookLendingInformation`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `RetriveBookLendingInformation` (IN `inid` INT(6), OUT `email` VARCHAR(50), OUT `title` VARCHAR(50), OUT `author` VARCHAR(50), OUT `genre` VARCHAR(50), OUT `start_Date_Time` DATETIME, OUT `end_Date_Time` DATETIME, OUT `ratings` FLOAT(3,2), OUT `firstname` VARCHAR(30), OUT `lastname` VARCHAR(30))  select b.id,b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname
+CREATE DEFINER=`root`@`localhost` PROCEDURE `RetriveBookLendingInformation`(IN `inid` INT(6), OUT `email` VARCHAR(50), OUT `title` VARCHAR(50), OUT `author` VARCHAR(50), OUT `genre` VARCHAR(50), OUT `start_Date_Time` DATETIME, OUT `end_Date_Time` DATETIME, OUT `ratings` FLOAT(3,2), OUT `firstname` VARCHAR(30), OUT `lastname` VARCHAR(30), OUT `location` VARCHAR(50))
+select b.id,b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname,b.location
 from book b, lender l, user u
 where inid = b.id AND b.email = l.email AND l.email = u.email$$
 

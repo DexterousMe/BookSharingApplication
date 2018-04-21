@@ -10,13 +10,14 @@ OUT start_Date_Time DATETIME,
 OUT end_Date_Time DATETIME,
 OUT ratings float(3,2),
 OUT firstname varchar(30),
-OUT lastname varchar(30)
+OUT lastname varchar(30),
+OUT location VARCHAR(50)
  )
  
  
 BEGIN
 
-      select b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname
+      select b.email, b.title, b.author, b.genre, b.start_Date_Time, b.end_Date_Time, l.ratings, u.firstname, u.lastname,b.location
       from book b, lender l, user u
       where inid = b.id AND b.email = l.email AND l.email = u.email;
      

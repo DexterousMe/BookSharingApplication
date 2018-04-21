@@ -36,7 +36,6 @@ loginApp.filter('customBookFilter',function(){
         if (!option.type || !option.term) {
             return input;
         }
-        console.log("Here now")
         var result = [];
         angular.forEach(input,function (val, key) {
             if(val[option.type].toLowerCase().indexOf(option.term.toLowerCase())>-1){
@@ -88,11 +87,11 @@ loginApp.controller('basicController',function($scope,$window,$http){
         method:"GET",
         url:"../config/RetriveData.php"
     }).then(function(response){
-        console.log("-------------");
         $scope.booksList = response.data;
     },function(response){
     });
     $scope.bookData = null;
+    
     $scope.checkAvailability = function(id){
         var bookIdentity = {bookId:id};
         $http({
@@ -101,23 +100,66 @@ loginApp.controller('basicController',function($scope,$window,$http){
             data: bookIdentity
         }).then(function(response){
             $scope.bookData = response.data.bookData;
+            console.log("Details");
+            console.log(bookIdentity.bookId);
+            console.log(response);
         },function(response){
         });
     }
     $scope.requestSentSuccessfully = false;
     $scope.sendBorrowRequest = function(bookId){
         var borrowData = {bookIdentity:bookId,borrowerEmail: $window.sessionStorage.getItem("userEmail")};
+       
+       
+        var bookIdentity = {bookId:bookId};
         $http({
             method: "POST",
-            url: "../config/BorrowRequest.php",
-            data: borrowData
+            url: "../config/retrieveBookInfo.php",
+            data: bookIdentity
         }).then(function(response){
-            console.log(response.data.message);
-            if(response.data.message=="True"){
-                $scope.requestSentSuccessfully = true;
-            }
+            $scope.bookData = response.data.bookData;
         },function(response){
         });
+        
+        //console.log($scope.bookData.Email);
+        //console.log($window.sessionStorage.getItem("userEmail"));
+
+
+        if($scope.bookData.Email!=$window.sessionStorage.getItem("userEmail"))
+        {
+            $http({
+                method: "POST",
+                url: "../config/BorrowRequest.php",
+                data: borrowData
+            }).then(function(response){
+                console.log(response.data.message);
+                if(response.data.message=="True"){
+                    $scope.requestSentSuccessfully = true;
+
+                     //adding to bookid
+                     //var borrowData={book_id:bookId,}
+
+                }
+            },function(response){
+            });
+        }
+        else $scope.requestSentSuccessfully = false;
+       
+        /*
+       //Starts
+        $http({
+                method: "POST",
+                url: "../config/BorrowRequest.php",
+                data: borrowData
+            }).then(function(response){
+                console.log(response.data.message);
+                if(response.data.message=="True"){
+                    $scope.requestSentSuccessfully = true;
+                }
+            },function(response){
+            });
+       //ends
+       */
     }
 });
 
@@ -134,18 +176,22 @@ loginApp.controller('addBookController',function($scope,$window,$http){
     $scope.location='';
     $scope.addBook = function(){
         var bookData = {emailBook:$window.sessionStorage.getItem("userEmail"),titleBook:$scope.title,authorBook:$scope.author,genreBook:$scope.genre,startDateBook:$scope.startDate,endDateBook:$scope.endDate,book_status:$scope.book_status,location:$scope.location,deliveryModeBook:$scope.deliveryMode};
-        console.log(bookData.titleBook);
-        console.log(bookData.authorBook);
-        console.log(bookData.genreBook);
         
-        console.log(bookData.startDateBook);
-        console.log(bookData.endDateBook);
+        //Check with this, 
+        //adding lender if he is not available in database
+       $scope.lenderMail="";
+        var lenderData={emailBook:$window.sessionStorage.getItem("userEmail"),ratings:0,no_of_reviews:0}
+        $http({
+            method: "POST",
+            url: "../config/addLender.php",
+            data: lenderData
+        }).then(function(response){
+            
+        },function(response){
+           
+        });
        
-        console.log(bookData.book_status);
-        console.log(bookData.deliveryModeBook);
-        console.log(bookData.location);
-       
-		$http({
+        $http({
             method: "POST",
             url: "../config/LenderData.php",
             data: bookData
@@ -156,6 +202,8 @@ loginApp.controller('addBookController',function($scope,$window,$http){
             else console.log("Adding data unsuccessful");
         },function(response){
         });
+    
+        
     }
 
 });

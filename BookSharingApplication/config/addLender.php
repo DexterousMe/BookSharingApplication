@@ -14,9 +14,11 @@ else {
     //get a json file and decode it
     $json = file_get_contents("php://input");
     $data = json_decode($json,true);
-    $bookId=$data["bookId"];
+    $emailBook=$data["emailBook"];
+    $ratings=$data['ratings'];
+    $no_of_reviews=$data['no_of_reviews'];
 
-    $stmt=$conn->query("CALL RetriveBookLendingInformation('" .$bookId. "',@p1,@p7,@p8,@p9,@p2,@p3,@p4,@p5,@p6,@p10);");
+    $stmt=$conn->query("CALL addLender('" .$emailBook. "','" .$ratings. "','" .$no_of_reviews. "');");
     //$stmt2=$conn->query("SELECT @p1 AS EMAIL");
     $result2 = $stmt->fetch(PDO::FETCH_ASSOC);
 //    $stmt8=$conn->query("SELECT @p7 AS TITLE");
@@ -37,18 +39,7 @@ else {
 //    $result7 = $stmt7->fetch();
     //The procedure returns only a bool value.
     $format=array();
-    $format['bookId'] = $result2['id'];
-    $format['Email']=$result2['email'];
-    $format['Title']=$result2['title'];
-    $format['Author']=$result2['author'];
-    $format['Genre']=$result2['genre'];
-    $format['StartDate']=$result2['start_Date_Time'];
-    $format['EndDate']=$result2['end_Date_Time'];
-    $format['Ratings']=$result2['ratings'];
-    $format['FirstName']=$result2['firstname'];
-    $format['LastName']=$result2['lastname'];
-    $format['location']=$result2['location'];
     echo json_encode(
-        array("bookData"=>$format)
+        $format
     );
 }
