@@ -90,8 +90,9 @@ loginApp.controller('basicController',function($scope,$window,$http){
         $scope.booksList = response.data;
     },function(response){
     });
-    $scope.bookData = null;
+    $scope.bookData = {};
     
+    var availValue=0;
     $scope.checkAvailability = function(id){
         var bookIdentity = {bookId:id};
         $http({
@@ -102,10 +103,12 @@ loginApp.controller('basicController',function($scope,$window,$http){
             $scope.bookData = response.data.bookData;
             console.log("Details");
             console.log(bookIdentity.bookId);
-            console.log(response);
+            console.log($scope.bookData.availability);
+            availValue=$scope.bookData.availability;
         },function(response){
         });
     }
+    console.log($scope.bookData);
     $scope.requestSentSuccessfully = false;
     $scope.sendBorrowRequest = function(bookId){
         var borrowData = {bookIdentity:bookId,borrowerEmail: $window.sessionStorage.getItem("userEmail")};
@@ -278,10 +281,34 @@ loginApp.controller('borrowedBooksController',function($scope,$window,$http){
         }
     },function(response){
     });
+
+    //Return request implementation
+    $scope.initiateReturn = function(book)
+    {
+        var returnData={book_id:book.id,borrower_email:$window.sessionStorage.getItem("userEmail"),lender_email:book.lender_email,return_status:0};
+        console.log(returnData);
+
+        $http({
+            method: "POST",
+            url: "../config/addReturnRequest.php",
+            data: returnData
+        }).then(function(response){
+            
+        },function(response){
+        });
+
+
+    
+    }
+    
 });
 
 loginApp.controller('notificationController',function($scope,$window,$http,$route){
     //console.log("Notification Controller");
+
+
+
+   
     var email = {email:$window.sessionStorage.getItem("userEmail")};
     $http({
         method: "POST",
@@ -289,10 +316,15 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
         data: email
     }).then(function(response){
         $scope.notificationList = response.data.message;
+      //  console.log("Coming here");
         console.log(response);
-        console.log($scope.notificationList);
+        //console.log($scope.notificationList);
     },function(response){
     });
+
+    
+    
+   
     $scope.approveBorrowRequest = function(book_id,borrower_email){
         //checking the book availability
 
@@ -322,6 +354,10 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
                     },function(response){
                     });
                 }
+            else {
+                $route.reload();
+                $window.location.reload();
+            }
            
             
         },function(response){
@@ -341,10 +377,44 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
                // console.log("Inside Borrow request approval");
                // console.log(response);
                 //$route.reload();
-              //  $window.location.reload();
+               // $window.location.reload();
             },function(response){
             });
        }
        */
     }
+
+    //console.log("Came here");
+    $scope.approveReturnRequest=function(book_id,borrower_email){
+        console.log(book_id);
+        console.log(borrower_email);
+        console.log($window.sessionStorage.getItem("userEmail"));
+        var returRequestdata={bid:book_id,b_email:borrower_email,lender_email:$window.sessionStorage.getItem("userEmail")}
+        $http({
+            method: "POST",
+            url: "../config/approveReturnRequest.php",
+            data: returRequestdata
+        }).then(function(response){
+           
+            //console.log($scope.notificationList);
+        },function(response){
+        });
+    }
+
+
+    var email = {lender_email:$window.sessionStorage.getItem("userEmail")};
+    $http({
+        method: "POST",
+        url: "../config/ReturnRequestNotifications.php",
+        data: email
+    }).then(function(response){
+        $scope.returnBookNotificationList = response.data.message;
+      //  console.log("Coming here");
+        console.log($scope.returnBookNotificationList);
+        //console.log($scope.notificationList);
+    },function(response){
+    });
+
+   
+
 });

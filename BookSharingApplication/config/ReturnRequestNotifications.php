@@ -14,8 +14,8 @@ else {
     //get a json file and decode it
     $json = file_get_contents("php://input");
     $data = json_decode($json,true);
-    $email=$data['email'];
-    $stmt=$conn->query("SELECT br.book_Id ,b.email ,b.ratings ,bk.title FROM borrower b, borrowrequest br, book bk WHERE  b.email = br.borrower_email AND bk.id = br.book_Id AND bk.email = '".$email."' ORDER BY br.book_Id");
+    $lender_email=$data['lender_email'];
+    $stmt=$conn->query("SELECT bk.title,bk.id ,bk.author ,bk.location,u.firstname,u.lastname,r.borrower_email FROM  book bk,user u,return_request r WHERE r.return_status=0 AND r.borrower_email=u.email AND bk.id = r.bookId AND r.lender_email = '".$lender_email."' ");
     $stmt->execute();
     //$result=$stmt->fetch(PDO::FETCH_ASSOC);
     //echo $result;

@@ -14,17 +14,20 @@ else {
     //get a json file and decode it
     $json = file_get_contents("php://input");
     $data = json_decode($json,true);
-    $email=$data['email'];
-    $stmt=$conn->query("SELECT br.book_Id ,b.email ,b.ratings ,bk.title FROM borrower b, borrowrequest br, book bk WHERE  b.email = br.borrower_email AND bk.id = br.book_Id AND bk.email = '".$email."' ORDER BY br.book_Id");
-    $stmt->execute();
-    //$result=$stmt->fetch(PDO::FETCH_ASSOC);
-    //echo $result;
-    //The procedure returns only a bool value.
+    $bid=$data["bid"];
+    $b_email=$data['b_email'];
+    $l_email=$data['lender_email'];
+
+    $stmt=$conn->query("CALL updateReturnRequestStatus('" .$bid. "','" .$b_email. "','" .$l_email. "');");
+    $stmt=$conn->query("CALL removeTransaction('" .$bid. "','" .$b_email. "','" .$l_email. "');");
+    $stmt=$conn->query("CALL makeBookAvailable('" .$bid. "');");
+
+
+    //$stmt2=$conn->query("SELECT @p1 AS EMAIL");
+    $result2 = $stmt->fetch(PDO::FETCH_ASSOC);
+
     $format=array();
-    while($row1=$stmt->fetch(PDO::FETCH_ASSOC)){
-        $format[]=$row1;
-    }
     echo json_encode(
-        array("message"=>$format)
+        $format
     );
 }

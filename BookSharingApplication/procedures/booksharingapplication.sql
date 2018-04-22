@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Apr 21, 2018 at 10:15 PM
+-- Generation Time: Apr 22, 2018 at 09:47 PM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -45,6 +45,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `addLender` (IN `email` VARCHAR(50),
 INSERT INTO `lender` ( `email`, `ratings`, `no_of_reviews`) VALUES
 (email, ratings, no_of_reviews)$$
 
+DROP PROCEDURE IF EXISTS `addReturnRequest`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addReturnRequest` (IN `book_id` INT, IN `borrower_email` VARCHAR(50), IN `lender_email` VARCHAR(50), IN `return_status` INT)  NO SQL
+insert into return_request 
+(bookId,borrower_email,lender_email,return_status)
+values (book_id,borrower_email,lender_email,return_status)$$
+
 DROP PROCEDURE IF EXISTS `addReviewForTransaction`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addReviewForTransaction` (IN `inptbookid` INT(6))  NO SQL
 insert into reviews(transaction_id) SELECT id from transaction where book_Id = inptbookid$$
@@ -80,7 +86,13 @@ DROP PROCEDURE IF EXISTS `getNotificationCount`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getNotificationCount` (IN `inptemail` VARCHAR(50), OUT `count` INT(6))  NO SQL
 SELECT count(*) into count
       FROM borrower b, borrowrequest br, book bk
-      WHERE b.email = br.borrower_email AND bk.id = br.book_Id AND bk.email = inptemail$$
+      WHERE bk.availability=1 AND b.email = br.borrower_email AND bk.id = br.book_Id AND bk.email = inptemail$$
+
+DROP PROCEDURE IF EXISTS `getReturnBookNotification`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getReturnBookNotification` (IN `lender_email` VARCHAR(50), OUT `count` INT)  NO SQL
+SELECT count(*) into count
+      FROM return_request r
+      WHERE r.lender_email=lender_email AND r.return_status=0$$
 
 DROP PROCEDURE IF EXISTS `getSecCode`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSecCode` (IN `inptemail` VARCHAR(50), OUT `securitycode` INT(5))  SELECT sec_code INTO securitycode FROM user where email=inptemail$$
@@ -97,6 +109,16 @@ END$$
 DROP PROCEDURE IF EXISTS `getUsers`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsers` (OUT `numOfUsers` INT(5))  SELECT COUNT(*) INTO numOfUsers FROM user$$
 
+DROP PROCEDURE IF EXISTS `makeBookAvailable`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `makeBookAvailable` (IN `bid` INT)  NO SQL
+UPDATE book 
+      set availability = 1
+      where id = bid$$
+
+DROP PROCEDURE IF EXISTS `removeTransaction`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `removeTransaction` (IN `bid` INT, IN `b_email` VARCHAR(50), IN `l_email` VARCHAR(50))  NO SQL
+DELETE FROM transaction where book_Id=bid AND b_email=borrower_email And lender_email=l_email$$
+
 DROP PROCEDURE IF EXISTS `retrieveBorrowRequests`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `retrieveBorrowRequests` (IN `inptemail` VARCHAR(50), OUT `abcd` JSON)  SELECT borrowrequest.book_Id,borrower.email ,borrower.ratings ,book.title FROM borrower , borrowrequest, book WHERE borrower.email = borrowrequest.borrower_email AND book.id = borrowrequest.book_Id AND book.email = inptemail ORDER BY borrowrequest.book_Id$$
 
@@ -112,6 +134,12 @@ DROP PROCEDURE IF EXISTS `updateBookAvailability`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateBookAvailability` (IN `inptbookid` INT(6))  UPDATE book 
       set availability = 0
       where id = inptbookid$$
+
+DROP PROCEDURE IF EXISTS `updateReturnRequestStatus`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateReturnRequestStatus` (IN `bid` INT, IN `b_email` VARCHAR(50), IN `l_email` VARCHAR(50))  NO SQL
+UPDATE return_request 
+      set return_status = 1
+      where bookId = bid AND borrower_email=b_email AND lender_email=l_email$$
 
 DROP PROCEDURE IF EXISTS `validateLogin`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `validateLogin` (IN `inptemail` VARCHAR(50), IN `inptpass` VARCHAR(30), OUT `validate` INT)  BEGIN
@@ -156,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `book` (
   `availability` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=84 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=91 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -173,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `borrower` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_2` (`email`),
   KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -190,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `borrowrequest` (
   UNIQUE KEY `borrower_email_2` (`borrower_email`),
   KEY `borrower_email` (`borrower_email`),
   KEY `book_Id` (`book_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=69 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -207,7 +235,22 @@ CREATE TABLE IF NOT EXISTS `lender` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_2` (`email`),
   KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `return_request`
+--
+
+DROP TABLE IF EXISTS `return_request`;
+CREATE TABLE IF NOT EXISTS `return_request` (
+  `bookId` int(11) NOT NULL,
+  `borrower_email` varchar(50) NOT NULL,
+  `lender_email` varchar(50) NOT NULL,
+  `return_status` int(11) NOT NULL,
+  PRIMARY KEY (`bookId`,`borrower_email`,`lender_email`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -231,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `borrower_review_approve` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `transaction_id` (`transaction_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -249,7 +292,7 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   KEY `lender_email` (`lender_email`),
   KEY `borrower_email` (`borrower_email`),
   KEY `book_Id` (`book_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 

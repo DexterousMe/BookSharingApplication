@@ -12,6 +12,7 @@
                 <p class="card-text">Genre:&nbsp;{{book.genre}}</p>
                 <p class="card-text">Lended by: {{book.lender_email}}</p>
                 <p class="card-text">Return by Date: {{book.end_Date_Time}}</p>
+                <a class="btn btn-outline-danger rounded-0" ng-click="initiateReturn(book)">Initiate Return</a>
                 <button class=""></button>
             </div>
         </div>

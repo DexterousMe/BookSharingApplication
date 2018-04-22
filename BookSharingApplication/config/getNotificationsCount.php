@@ -15,7 +15,8 @@ else {
     $data = json_decode($json,true);
     $user=$data['email'];
     $stmt=$conn->query("CALL getNotificationCount('".$user."',@p1);");
-    $stmt2=$conn->query("SELECT @p1 AS COUNT");
+    $stmt2=$conn->query("CALL getReturnBookNotification('".$user."',@p2);");
+    $stmt2=$conn->query("SELECT @p1+@p2 AS COUNT");
     //The procedure returns only a bool value.
     $result = $stmt2->fetch();
     echo json_encode(

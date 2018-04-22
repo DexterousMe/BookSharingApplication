@@ -6,10 +6,24 @@
                 <div class="card-body">
                     <p class="card-text"><strong>Requested By:</strong> {{notification.email}}</p>
                     <p class="card-text"><strong>Borrower Ratings:</strong> {{notification.ratings}}</p>
-                    <a class="btn btn-outline-danger rounded-0" ng-click="approveBorrowRequest(notification.book_Id,notification.email)">Approve</a>
+                    <a class="btn btn-outline-danger rounded-0" ng-click="approveBorrowRequest(notification.book_Id,notification.email)">Approve Borrow Request</a>
                 </div>
 
             </div>
         </div>
+
+        <div ng-repeat="notification in returnBookNotificationList">
+            <div class="card rounded-0 border-dark" style="margin-top: 2%;">
+                <div class="card-header rounded-0" style="background-color: black; color: white;">{{notification.title}}</div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Author:</strong> {{notification.author}}</p>
+                    <p class="card-text"><strong>Borrower:</strong> {{notification.firstname}} {{notification.lastname}}</p>
+                    <a class="btn btn-outline-danger rounded-0" ng-click="approveReturnRequest(notification.id,notification.borrower_email)">Approve Return Request</a>
+                </div>
+
+            </div>
+        </div>
+        
+
     </div>
 </div>
