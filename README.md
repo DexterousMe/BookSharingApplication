@@ -17,15 +17,15 @@ This is second phase of development, where we enhanced application features and 
 ## Technology Stack
 The current usage of technologies for accomplishing project goals are discussed below:
 
-* MySQL(5.7.19 or above) - The databse of the project is developed in MySQL and are using phpMyAdmin administration tool.
-* PHP(7.2.3 or above) - It is used to code the backend of the project. We are using PhpStorm as our IDE.
+* MySQL(5.7.21) - The databse of the project is developed in MySQL and are using phpMyAdmin administration tool.
+* PHP(7.2.3) - It is used to code the backend of the project. We are using PhpStorm as our IDE.
 * HTML5/CSS3 - HTML, a markup language and CSS, a style sheet language are used as primary laguages for application's frontend development. 
 * WAMP - Used as webserver solution stack.
 
 ## Installation Instructions(for handover)
 1. Install [WAMP Server](https://sourceforge.net/projects/wampserver/?source=navbar)
 2. Clone the Git Repository in the www folder of wampp.
-3. Setup ports in the WAMPP for MySQL(using PHPmyAdmin) and localhost.
+3. Setup ports in the WAMPP for MySQL(using [PHPmyAdmin](http:localhost/phpmyadmin)) and localhost.
 4. To setup the Database, open PHPmyAdmin in your browser and create a database called "booksharingapplication" (without quotes).
 5. Then click on the import button in PHPmyAdmin and provide the file "booksharingapplication.sql" inside the procedures folder to import the database, tables and procedures.
 6. Run localhost:portno/BookSharingApplication/BookSharingApplication/index.html
