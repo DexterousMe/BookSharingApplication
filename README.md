@@ -31,6 +31,8 @@ The current usage of technologies for accomplishing project goals are discussed 
 6. Run localhost:portno/BookSharingApplication/BookSharingApplication/index.html
 7. Congratulations, your website is setup.
 
+## Link of application deployed on Amazon EC2
+[WOLFSHARE](http://ec2-18-188-207-168.us-east-2.compute.amazonaws.com/BookSharingApplication/BookSharingApplication/index.html)
 
 ## Team
 [Abhinandan Deshpande](https://github.com/abhinandan27),
