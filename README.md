@@ -27,7 +27,7 @@ The current usage of technologies for accomplishing project goals are discussed 
 2. Clone the Git Repository in the www folder of wampp.
 3. Setup ports in the WAMPP for MySQL(using [PHPmyAdmin](http:localhost/phpmyadmin)) and localhost.
 4. To setup the Database, open PHPmyAdmin in your browser and create a database called "booksharingapplication" (without quotes).
-5. Then click on the import button in PHPmyAdmin and provide the file "booksharingapplication.sql" inside the procedures folder to import the database, tables and procedures.
+5. Then click on the import button in PHPmyAdmin and provide the file "[booksharingapplication.sql](https://github.com/DexterousMe/BookSharingApplication/blob/master/booksharingapplication.sql)" inside the procedures folder to import the database, tables and procedures.
 6. Run localhost:portno/BookSharingApplication/BookSharingApplication/index.html
 7. Congratulations, your website is setup.
 
