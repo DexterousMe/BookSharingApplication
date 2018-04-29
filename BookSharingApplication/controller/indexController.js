@@ -142,6 +142,14 @@ app.controller('indexController',function($scope,$window,$http){
     $scope.emailLogin = '';
     $scope.passwordLogin = '';
     $scope.checkValidationLogin = function(){
+
+        //payment
+         //payment entry
+        
+
+        //payment
+
+
         $scope.emailLoginInvalid = false;
         $scope.passwordLoginInvalid  = false;
         $scope.loginFormError = false;
@@ -179,6 +187,9 @@ app.controller('indexController',function($scope,$window,$http){
         else{
             $scope.loginFormError = true;
         }
+
+      
+
     }
     $scope.dropdownSelect = false;
     $scope.categorySelect = function(selectedCategory){
@@ -198,6 +209,11 @@ app.controller('indexController',function($scope,$window,$http){
             $scope.secCodeLengthError = true;
             validity = false;
         }
+
+       
+
+
+        //payment ends
         if(validity){
             var secCodeData = {loginEmail:$scope.email,securitycode:$scope.secCode};
             $http({

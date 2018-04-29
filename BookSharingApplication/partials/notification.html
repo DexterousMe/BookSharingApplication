@@ -18,7 +18,18 @@
                 <div class="card-body">
                     <p class="card-text"><strong>Author:</strong> {{notification.author}}</p>
                     <p class="card-text"><strong>Borrower:</strong> {{notification.firstname}} {{notification.lastname}}</p>
-                    <a class="btn btn-outline-danger rounded-0" ng-click="approveReturnRequest(notification.id,notification.borrower_email)">Approve Return Request</a>
+                    
+                    <div class="modal-footer" ng-hide="approveReturn">  
+                         <a class="btn btn-outline-danger rounded-0" ng-click="approveReturnRequest(notification.id,notification.borrower_email)">Approve Return Request</a>
+                    </div>
+                
+                    <div>
+                        <p class="text-success" ng-show="approveReturn" style="font-size:small;"><strong>Return approved</strong></p>
+        
+                    </div>
+                
+                
+                
                 </div>
 
             </div>
@@ -27,3 +38,14 @@
 
     </div>
 </div>
+
+
+<!--
+    <div class="modal-footer" ng-hide="requestSentSuccessfully">
+                        <button type="button" class="btn btn-outline-danger rounded-0" ng-click="sendBorrowRequest(bookData.bookId)">Send Borrow Request</button>
+                    </div>
+                    <div>
+                        <p class="text-success" ng-show="requestSentSuccessfully" style="font-size:small;"><strong>Request Sent Successfully</strong></p>
+        
+                    </div>
+-->

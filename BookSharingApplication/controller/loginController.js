@@ -201,6 +201,7 @@ loginApp.controller('basicController',function($scope,$window,$http){
 
 loginApp.controller('addBookController',function($scope,$window,$http){
     console.log("Add book Controller");
+     
     $scope.title = '';
     $scope.author = '';
     $scope.genre='';
@@ -293,7 +294,9 @@ loginApp.controller('borrowedBooksController',function($scope,$window,$http){
             url: "../config/addReturnRequest.php",
             data: returnData
         }).then(function(response){
-            
+            console.log("HELLO");
+           // $route.reload();
+            //$window.location.reload();
         },function(response){
         });
 
@@ -395,7 +398,9 @@ loginApp.controller('notificationController',function($scope,$window,$http,$rout
             url: "../config/approveReturnRequest.php",
             data: returRequestdata
         }).then(function(response){
-           
+           //$route.reload();
+                $route.reload();
+                $window.location.reload();
             //console.log($scope.notificationList);
         },function(response){
         });
